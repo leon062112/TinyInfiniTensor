@@ -4,14 +4,33 @@
 namespace infini {
 
 Shape infer_broadcast(const Shape &A, const Shape &B) {
+    Shape a = A;
+    Shape b = B;
 
-    // =================================== 作业 ===================================
-    // TODO：对 A 和 B 进行双向广播，返回广播后的形状。
-    // REF: https://github.com/onnx/onnx/blob/main/docs/Broadcasting.md
-    // =================================== 作业 ===================================
-    
-    return {};
+    // 1. 对齐 rank（前面补 1）
+    if (a.size() < b.size()) {
+        a.insert(a.begin(), b.size() - a.size(), 1);
+    } else if (b.size() < a.size()) {
+        b.insert(b.begin(), a.size() - b.size(), 1);
+    }
+
+    // 2. 逐维计算 broadcast 后的 shape
+    Shape out(a.size());
+    for (size_t i = 0; i < a.size(); ++i) {
+        if (a[i] == b[i]) {
+            out[i] = a[i];
+        } else if (a[i] == 1) {
+            out[i] = b[i];
+        } else if (b[i] == 1) {
+            out[i] = a[i];
+        } else {
+            IT_ASSERT(false && "Broadcast shape mismatch");
+        }
+    }
+
+    return out;
 }
+
 
 int get_real_axis(const int &axis, const int &rank) {
     IT_ASSERT(rank >= 1);

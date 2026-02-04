@@ -25,7 +25,8 @@ namespace infini {
                      ", " + ss.str() + "\n";
         vector<UidBaseType> targetGuids;
         for (const auto &op : targets)
-            targetGuids.emplace_back(op.lock()->getGuid());
+            if (auto locked = op.lock())
+                targetGuids.emplace_back(locked->getGuid());
         if (auto o = source.lock())
             ret += ", source " + std::to_string(o->getGuid());
         else

@@ -17,6 +17,15 @@ optional<vector<Shape>> ConcatObj::inferShape(const TensorVec &inputs) {
     // TODO：修改 dims，返回正确的 concat 后的 shape
     // REF: https://onnx.ai/onnx/operators/onnx__Concat.html#concat-13
     // =================================== 作业 ===================================
+    
+    // 计算拼接维度上的总和
+    int concatDimSize = 0;
+    for (const auto &input : inputs) {
+        concatDimSize += input->getDims()[dim];
+    }
+    
+    // 更新拼接维度的大小
+    dims[dim] = concatDimSize;
 
     return {{dims}};
 }
